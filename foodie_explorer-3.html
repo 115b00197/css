@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foodie 美食探索</title>
+<style>
+:root{--orange:#f47c48;--dark:#29251f;--cream:#fff8f0;--muted:#786f66;--green:#496b55}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;background:var(--cream);color:var(--dark)}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px clamp(18px,6vw,80px);background:#fff;position:sticky;top:0;z-index:5;box-shadow:0 2px 14px #39210d0b}
+.logo{font-size:1.35rem;font-weight:900;letter-spacing:.3px}.logo span{color:var(--orange)}
+nav{display:flex;gap:22px}nav a{color:var(--dark);text-decoration:none;font-weight:650;font-size:.95rem}
+.hero{padding:66px clamp(18px,8vw,110px) 54px;display:grid;grid-template-columns:1.1fr .9fr;gap:35px;align-items:center;background:linear-gradient(120deg,#fff0df,#fff8f0)}
+.eyebrow{color:var(--orange);font-weight:800;letter-spacing:2px;font-size:.85rem}
+h1{font-size:clamp(2.4rem,5vw,4.5rem);line-height:1.12;margin:14px 0 18px;letter-spacing:-1.5px}
+.hero p{color:var(--muted);font-size:1.08rem;line-height:1.8;max-width:500px}
+.searchbar{display:flex;gap:8px;background:white;border:1px solid #eee0d2;border-radius:16px;padding:7px;margin-top:25px;max-width:510px;box-shadow:0 8px 24px #7040180c}
+.searchbar input{min-width:0;flex:1;border:0;outline:0;padding:10px 12px;font-size:1rem;background:transparent}
+button{cursor:pointer;font:inherit}
+.searchbar button,.primary{background:var(--orange);color:white;border:0;border-radius:11px;padding:12px 18px;font-weight:800}
+.hero-art{min-height:280px;border-radius:30px;background:linear-gradient(145deg,#f9c98c,#f17a4a);display:grid;place-items:center;position:relative;overflow:hidden}
+.hero-art:before,.hero-art:after{content:"";position:absolute;border-radius:50%;background:#fff5df55}
+.hero-art:before{width:260px;height:260px;right:-35px;top:-70px}.hero-art:after{width:190px;height:190px;left:-55px;bottom:-65px}
+.food-emoji{font-size:clamp(7rem,17vw,12rem);filter:drop-shadow(0 18px 10px #8b431d38);z-index:1;transform:rotate(-8deg)}
+.art-label{position:absolute;bottom:20px;right:22px;background:#fffdf2;color:#5d4b3d;padding:9px 14px;border-radius:99px;font-weight:800;z-index:2}
+main{padding:42px clamp(18px,8vw,110px) 65px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:20px}
+h2{font-size:1.8rem;margin:0 0 7px}.sub{color:var(--muted);margin:0}
+.categories{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 28px}
+.chip{border:1px solid #ead8c7;background:#fff;border-radius:99px;padding:10px 17px;color:#5e5147;font-weight:700}
+.chip.active,.chip:hover{background:var(--dark);color:white;border-color:var(--dark)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.card{background:white;border-radius:20px;overflow:hidden;border:1px solid #f0e4d8;box-shadow:0 8px 22px #482b1308;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-4px);box-shadow:0 15px 30px #482b1312}
+.photo{height:170px;display:grid;place-items:center;font-size:5.5rem;position:relative}
+.photo small{position:absolute;left:13px;top:13px;background:#ffffffdb;border-radius:99px;padding:5px 10px;font-size:.76rem;font-weight:800;color:#5d4637}
+.p1{background:#ffe2bd}.p2{background:#f8d9d6}.p3{background:#dce8cf}.p4{background:#f8e8a8}.p5{background:#d9e8ef}.p6{background:#eadcf7}
+.card-body{padding:17px}.card-title{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.card h3{font-size:1.12rem;margin:0 0 7px}.price{color:var(--orange);font-weight:900;white-space:nowrap}
+.card p{color:var(--muted);line-height:1.6;font-size:.92rem;margin:0 0 14px}
+.card-foot{display:flex;justify-content:space-between;align-items:center;color:#887c71;font-size:.85rem}
+.favorite{border:1px solid #f0dfd1;background:#fff8f2;border-radius:99px;padding:7px 10px;color:#7a5c49;font-weight:750}
+.favorite.saved{background:#ffe3e0;color:#b84343;border-color:#ffd0cb}
+.empty{grid-column:1/-1;text-align:center;padding:50px 15px;background:#fff;border-radius:18px;color:var(--muted)}
+.tip{margin-top:42px;padding:26px 30px;border-radius:22px;background:#e8efe5;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.tip h2{font-size:1.45rem}.tip p{color:#5b6e5e;line-height:1.7;margin:8px 0 0}
+.tip .emoji{font-size:3.4rem}
+footer{text-align:center;padding:25px 18px;background:#29251f;color:#e9ddd1;font-size:.9rem}
+footer span{color:#ffab7f}
+@media(max-width:800px){.hero{grid-template-columns:1fr;padding-top:45px}.hero-art{min-height:220px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}nav{gap:12px}}
+@media(max-width:540px){nav a:nth-child(2){display:none}.grid{grid-template-columns:1fr}.photo{height:190px}.section-head{align-items:start;flex-direction:column}.tip{padding:22px}.hero{gap:24px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🍴 <span>Foodie</span> 美食探索</div>
+  <nav><a href="#home">首頁</a><a href="#discover">探索美食</a><a href="#tips">美食小知識</a></nav>
+</header>
+
+<section class="hero" id="home">
+  <div>
+    <div class="eyebrow">GOOD FOOD, GOOD MOOD</div>
+    <h1>今天，想吃點<br>什麼好吃的？</h1>
+    <p>從療癒甜點到人氣正餐，發掘你的下一個美食口袋名單。用美食，為平凡的一天加點好心情。</p>
+    <form class="searchbar" id="searchForm">
+      <input id="searchInput" type="search" placeholder="搜尋料理，例如：拉麵、甜點…" aria-label="搜尋美食">
+      <button type="submit">開始搜尋</button>
+    </form>
+  </div>
+  <div class="hero-art" aria-label="美食插圖">
+    <div class="food-emoji">🍜</div><div class="art-label">今日美食靈感 ✨</div>
+  </div>
+</section>
+
+<main id="discover">
+  <div class="section-head">
+    <div><h2>探索美食</h2><p class="sub">挑選喜歡的類型，找到今天的好味道。</p></div>
+    <div id="resultCount" class="sub">共 6 道推薦</div>
+  </div>
+  <div class="categories" aria-label="美食分類">
+    <button class="chip active" data-category="全部">🍽️ 全部</button>
+    <button class="chip" data-category="正餐">🍚 正餐</button>
+    <button class="chip" data-category="小吃">🥟 台灣小吃</button>
+    <button class="chip" data-category="甜點">🍰 甜點</button>
+    <button class="chip" data-category="飲品">🧋 飲品</button>
+  </div>
+  <div class="grid" id="foodGrid"></div>
+
+  <section class="tip" id="tips">
+    <div><h2>🌱 美味，也可以更永續</h2><p>自備環保餐具、選擇適量餐點、支持在地食材，<br>從每一次吃飯開始，讓美食與地球都更美好。</p></div>
+    <div class="emoji">🥢</div>
+  </section>
+</main>
+<footer>用美食探索生活的美好 · <span>Foodie</span> © 2026</footer>
+
+<script>
+const foods = [
+ {name:"日式豚骨拉麵",category:"正餐",emoji:"🍜",price:"$180 起",desc:"濃郁湯頭搭配彈牙麵條，暖心又滿足。",tag:"人氣推薦",rating:"⭐ 4.8",bg:"p1"},
+ {name:"珍珠奶茶",category:"飲品",emoji:"🧋",price:"$65 起",desc:"茶香與Q彈珍珠的經典組合，甜度可調整。",tag:"台灣經典",rating:"⭐ 4.7",bg:"p2"},
+ {name:"手作草莓蛋糕",category:"甜點",emoji:"🍰",price:"$120 起",desc:"鬆軟蛋糕配上酸甜草莓，午後療癒首選。",tag:"甜點時光",rating:"⭐ 4.9",bg:"p6"},
+ {name:"台式滷肉飯",category:"正餐",emoji:"🍚",price:"$70 起",desc:"鹹香滷汁淋上白飯，簡單卻讓人回味。",tag:"銅板美食",rating:"⭐ 4.6",bg:"p4"},
+ {name:"酥脆雞排",category:"小吃",emoji:"🍗",price:"$85 起",desc:"外酥內嫩、香氣十足，散步時的好夥伴。",tag:"街頭小吃",rating:"⭐ 4.7",bg:"p3"},
+ {name:"日式抹茶甜點",category:"甜點",emoji:"🍵",price:"$100 起",desc:"淡雅茶香與微苦滋味，適合喜歡清爽口感的人。",tag:"人氣甜品",rating:"⭐ 4.5",bg:"p5"}
+];
+let activeCategory = "全部";
+let searchTerm = "";
+const saved = new Set();
+const grid = document.getElementById("foodGrid");
+function render(){
+ const filtered = foods.filter(f => (activeCategory==="全部" || f.category===activeCategory) &&
+  (f.name+f.category+f.desc).toLowerCase().includes(searchTerm.toLowerCase()));
+ document.getElementById("resultCount").textContent = `共 ${filtered.length} 道推薦`;
+ if(!filtered.length){grid.innerHTML='<div class="empty">🥹 找不到符合的美食，試試其他關鍵字或分類吧！</div>';return;}
+ grid.innerHTML = filtered.map(f=>`<article class="card">
+   <div class="photo ${f.bg}"><small>${f.tag}</small>${f.emoji}</div>
+   <div class="card-body"><div class="card-title"><div><h3>${f.name}</h3></div><span class="price">${f.price}</span></div>
+   <p>${f.desc}</p><div class="card-foot"><span>${f.rating} · ${f.category}</span>
+   <button class="favorite ${saved.has(f.name)?'saved':''}" data-favorite="${f.name}" aria-label="收藏${f.name}">${saved.has(f.name)?'♥ 已收藏':'♡ 收藏'}</button></div></div>
+ </article>`).join("");
+}
+document.querySelectorAll(".chip").forEach(btn=>btn.addEventListener("click",()=>{
+ activeCategory=btn.dataset.category;
+ document.querySelectorAll(".chip").forEach(b=>b.classList.toggle("active",b===btn));
+ render();
+}));
+document.getElementById("searchForm").addEventListener("submit",e=>{
+ e.preventDefault();searchTerm=document.getElementById("searchInput").value.trim();render();
+ document.getElementById("discover").scrollIntoView({behavior:"smooth"});
+});
+document.getElementById("searchInput").addEventListener("input",e=>{searchTerm=e.target.value.trim();render();});
+grid.addEventListener("click",e=>{
+ const btn=e.target.closest("[data-favorite]");if(!btn)return;
+ const name=btn.dataset.favorite;
+ if(saved.has(name))saved.delete(name);else saved.add(name);
+ render();
+});
+render();
+</script>
+</body>
+</html>
